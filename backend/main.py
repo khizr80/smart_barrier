@@ -21,8 +21,12 @@ genai.configure(api_key=GEMINI_API_KEY)
 gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # --- DB Setup ---
-DATABASE_URL = "sqlite:///./alerts.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./alerts.db")
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+else:
+    engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -148,8 +152,8 @@ def analyze_history():
             db.close()
 
 # --- MQTT Setup ---
-BROKER = "broker.emqx.io"
-PORT = 1883
+BROKER = os.getenv("MQTT_BROKER", "broker.emqx.io")
+PORT = int(os.getenv("MQTT_PORT", "1883"))
 
 def on_connect(client, userdata, flags, reason_code, properties):
     print("Connected to MQTT")
@@ -216,6 +220,10 @@ def get_alerts(limit: int = 20):
         }
         for a in alerts
     ]
+
+@app.get("/")
+def health_check():
+    return {"message": "backend works"}
 
 @app.get("/api/status")
 def get_status():
