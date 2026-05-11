@@ -38,11 +38,11 @@ python -m venv venv
 # 2️⃣ Activate it (Windows)
 venv\Scripts\activate
 # 3️⃣ Install dependencies
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 # 4️⃣ Set environment variables – copy the example file
 cp .env.example .env   # edit .env and add your Gemini API key
 # 5️⃣ Run the server (hot‑reload)
-uvicorn main:app --reload
+*uvicorn main:app --reload*
 ```
 The API will be reachable at `http://127.0.0.1:8000`.
 
@@ -72,10 +72,13 @@ Render offers a **static‑IP, always‑on** environment suitable for MQTT clien
    ```bash
    pip install -r backend/requirements.txt
    ```
-5. **Start Command** (Render runs the command in the repo root, so we prefix the path):
+5. **Start Command**: 
+   If you leave **Root Directory** as default (the main folder), use:
    ```bash
-   uvicorn backend/main:app --host 0.0.0.0 --port $PORT
+   uvicorn backend.main:app --host 0.0.0.0 --port $PORT
    ```
+   *(Note: Do NOT use `--reload` on Render, it is only for local testing.)*
+
 6. **Environment Variables** – add the following in Render’s dashboard:
    - `GEMINI_API_KEY` – your Google Gemini key
    - `MQTT_BROKER` – `broker.emqx.io`

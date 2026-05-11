@@ -58,10 +58,13 @@ function App() {
   }, [mode]);
 
   useEffect(() => {
+    // Determine API Base URL (Production or Local)
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
     // Poll alerts every 2 seconds
     const fetchAlerts = async () => {
       try {
-        const res = await axios.get('http://localhost:8000/api/alerts');
+        const res = await axios.get(`${API_BASE}/api/alerts`);
         setAlerts(res.data);
       } catch (err) {
         console.error("Failed to fetch alerts", err);
