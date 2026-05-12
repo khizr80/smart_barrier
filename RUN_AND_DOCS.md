@@ -17,7 +17,7 @@ cd backend
 python -m venv venv
 
 # Activate virtual environment
-# On Windows:
+# On Windows:cked
 .\venv\Scripts\activate
 # On Linux/Mac:
 source venv/bin/activate
