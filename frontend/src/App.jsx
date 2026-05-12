@@ -27,6 +27,7 @@ function App() {
       client.subscribe('barrier/distance');
       client.subscribe('barrier/ai_status');
       client.subscribe('barrier/ai_mode/ack');
+      client.subscribe('barrier/config/ack');
     });
 
     client.on('message', (topic, message) => {
@@ -51,6 +52,8 @@ function App() {
         }
       } else if (topic === 'barrier/ai_mode/ack') {
         setAiEngine(payload.active_mode);
+      } else if (topic === 'barrier/config/ack') {
+        setDangerThreshold(payload.danger_threshold);
       }
     });
 
@@ -61,7 +64,20 @@ function App() {
     // Determine API Base URL (Production or Local)
     const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-    // Poll alerts every 2 seconds
+    // 1. Initial Sync
+    const fetchInitialStatus = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/api/status`);
+        setAiEngine(res.data.ai_mode);
+        setDangerThreshold(res.data.danger_threshold);
+        setAiStatus(res.data.current_status);
+      } catch (err) {
+        console.error("Failed to fetch initial status", err);
+      }
+    };
+    fetchInitialStatus();
+
+    // 2. Poll alerts every 2 seconds
     const fetchAlerts = async () => {
       try {
         const res = await axios.get(`${API_BASE}/api/alerts`);

@@ -27,31 +27,41 @@ print("Starting ESP32 Simulator...")
 
 try:
     while True:
-        # 1. STATIONARY (far)
+        # --- MODE 1: STATIONARY (Idle) ---
+        # Logic: Small fluctuations between -1 and +1 cm.
+        # Result: Backend avg_diff will be near 0. Classification -> STATIONARY.
         print("--- Mode: STATIONARY (Far) ---")
         for _ in range(6):
             distance += random.uniform(-1, 1)
             publish_distance(distance)
 
-        # 2. APPROACHING (normal)
+        # --- MODE 2: APPROACHING (Normal) ---
+        # Logic: Decreasing distance by 2-5 cm every 0.5s.
+        # Threshold: Backend triggers APPROACHING if avg_diff is < -1 cm.
         print("--- Mode: APPROACHING ---")
         for _ in range(10):
             distance -= random.uniform(2, 5) # decrease 2-5 cm per tick
             publish_distance(distance)
 
-        # 3. LINGERING
+        # --- MODE 3: LINGERING (Danger Zone) ---
+        # Logic: Staying still (fluctuation -1 to +1) while distance is likely < 60cm.
+        # Threshold: Backend triggers LINGERING if distance < 60 and max_diff < 10.
         print("--- Mode: LINGERING ---")
         for _ in range(15):
             distance += random.uniform(-1, 1)
             publish_distance(distance)
 
-        # 4. MOVING AWAY
+        # --- MODE 4: MOVING AWAY ---
+        # Logic: Increasing distance by 5-8 cm every 0.5s.
+        # Threshold: Backend triggers MOVING_AWAY if avg_diff is > 2 cm.
         print("--- Mode: MOVING AWAY ---")
         for _ in range(8):
             distance += random.uniform(5, 8)
             publish_distance(distance)
 
-        # 5. FAST APPROACH
+        # --- MODE 5: FAST APPROACH (Emergency/Speeding) ---
+        # Logic: Decreasing distance very quickly (15-20 cm per 0.5s).
+        # Threshold: Backend triggers FAST_APPROACH if avg_diff is < -10 cm.
         print("--- Mode: FAST APPROACH ---")
         for _ in range(5):
             distance -= random.uniform(15, 20)

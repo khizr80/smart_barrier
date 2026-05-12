@@ -185,6 +185,55 @@ npm run dev
 
 ---
 
+## 🔧 Configuration & Environment Switching
+
+### 1. Switch Backend (Local vs Deployed)
+The dashboard uses an environment variable to locate the API.
+
+- **Local Backend (Default)**: 
+  Ensure `frontend/.env` has: `VITE_API_URL=http://localhost:8000`
+- **Deployed Backend**:
+  Update `frontend/.env` with your URL:
+  ```env
+  VITE_API_URL=https://your-deployed-api.vercel.app
+  ```
+  *Note: Restart the frontend dev server after changing `.env`.*
+
+### 2. Switch AI Mode (Local vs Gemini)
+The system supports two processing modes that can be switched in real-time.
+
+- **Dashboard Toggle**: Use the **Local AI** and **Gemini AI** buttons in the header.
+- **Persistent Change**: Change `ai_mode = "local"` (or `"gemini"`) on line 56 of `backend/main.py`.
+- **Logic**:
+    - **Local**: Rule-based algorithm (Fast, no cost).
+    - **Gemini**: LLM-based analysis (Robust, requires API key).
+
+---
+
+## 🚀 Quick Run Commands
+
+**Terminal 1 (Backend):**
+```powershell
+cd backend
+.\venv\Scripts\activate
+uvicorn main:app --reload
+```
+
+**Terminal 2 (Frontend):**
+```powershell
+cd frontend
+npm run dev
+```
+
+**Terminal 3 (Hardware Simulator - Optional):**
+```powershell
+cd backend
+.\venv\Scripts\activate
+python simulator.py
+```
+
+---
+
 ## Architecture
 
 ```mermaid
